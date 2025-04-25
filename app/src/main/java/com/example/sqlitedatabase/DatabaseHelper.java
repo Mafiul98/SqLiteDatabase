@@ -2,13 +2,14 @@ package com.example.sqlitedatabase;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static String DB_NAME = "database";
+    public static String DB_NAME = "my_database";
     public static int DB_VERSION = 1;
 
     public DatabaseHelper(Context context) {
@@ -33,8 +34,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase database  = this.getWritableDatabase();
 
         ContentValues conval = new ContentValues();
-        conval.put("Name",name);
-        conval.put("Mpbile",mobile);
+        conval.put("name",name);
+        conval.put("mobile",mobile);
         database.insert("my_table",null,conval);
     }
+
+    public Cursor getAlldata(){
+
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("select * from my_table",null);
+        return cursor;
+
+
+    }
+
+
 }
