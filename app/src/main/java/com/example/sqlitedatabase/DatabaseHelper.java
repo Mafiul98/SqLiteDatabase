@@ -39,12 +39,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.insert("my_table",null,conval);
     }
 
+
     public Cursor getAlldata(){
 
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery("select * from my_table",null);
         return cursor;
 
+
+    }
+
+    public void deleteAlldata(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("my_table", null, null);
 
     }
 
