@@ -34,8 +34,15 @@ public class MainActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbhelper.insertdata(edname1.getText().toString(),edname2.getText().toString());
-                Toast.makeText(MainActivity.this,"Data has been insrted",Toast.LENGTH_LONG).show();
+
+                if (edname1.length()>0 & edname2.length()>0){
+                    dbhelper.insertdata(edname1.getText().toString(),edname2.getText().toString());
+                    Toast.makeText(MainActivity.this,"Data has been insrted",Toast.LENGTH_LONG).show();
+
+                }else Toast.makeText(MainActivity.this,"Please enter all the fields",Toast.LENGTH_LONG).show();
+                edname1.setText("");
+                edname2.setText("");
+
 
             }
         });

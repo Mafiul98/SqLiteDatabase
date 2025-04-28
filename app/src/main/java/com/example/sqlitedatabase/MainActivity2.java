@@ -8,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,7 @@ public class MainActivity2 extends AppCompatActivity {
     DatabaseHelper dbhelper;
 
     ArrayList<User> datalist = new ArrayList<>();
+    myadapter adapter;
 
 
     @Override
@@ -52,6 +55,7 @@ public class MainActivity2 extends AppCompatActivity {
         }
 
 
+        adapter = new myadapter();
         listview.setAdapter(new myadapter());
 
     }
@@ -66,12 +70,12 @@ public class MainActivity2 extends AppCompatActivity {
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return datalist.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override
@@ -82,12 +86,26 @@ public class MainActivity2 extends AppCompatActivity {
             TextView tvid = myview.findViewById(R.id.tvid);
             TextView tvname = myview.findViewById(R.id.tvname);
             TextView tvmobile = myview.findViewById(R.id.tvmobile);
+            ImageView imageview = myview.findViewById(R.id.imageview);
 
             User user = datalist.get(position);
 
             tvid.setText("Id: " + user.getId());
             tvname.setText("Name: " + user.getName());
             tvmobile.setText("Mobile: " + user.getMobile());
+
+            imageview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    int id = user.getId();
+                    dbhelper.deleteone(id);
+                    datalist.remove(position);
+                    notifyDataSetChanged();
+                    Toast.makeText(MainActivity2.this,"Data has been deleted"+id,Toast.LENGTH_LONG).show();
+
+                }
+            });
 
 
             return myview;

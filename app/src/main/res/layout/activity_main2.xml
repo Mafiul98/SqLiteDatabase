@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity2"
     android:orientation="vertical"
-    android:layout_margin="10dp"
     android:background="#ffffff"
     >
 

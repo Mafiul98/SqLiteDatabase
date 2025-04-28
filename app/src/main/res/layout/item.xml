@@ -12,8 +12,9 @@
             android:layout_height="wrap_content"
             android:elevation="5dp"
             app:cardCornerRadius="10dp"
-            android:backgroundTint="#11000000"
+            android:backgroundTint="#B8D9D4"
             android:layout_marginTop="8dp"
+            android:layout_margin="10dp"
             >
 
             <LinearLayout
@@ -27,7 +28,7 @@
                     android:id="@+id/tvid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Name"
+                    android:hint="Id"
                     android:textSize="25sp"
                     />
 
@@ -38,13 +39,31 @@
                     android:hint="Name"
                     android:textSize="25sp"
                     />
-                <TextView
-                    android:id="@+id/tvmobile"
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Mobile"
-                    android:textSize="25sp"
-                    />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvmobile"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Mobile"
+                        android:textSize="25sp"
+                        />
+
+                    <ImageView
+                        android:id="@+id/imageview"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/delete"
+                        android:layout_marginBottom="10dp"
+                        />
+
+                </LinearLayout>
+
 
 
             </LinearLayout>
