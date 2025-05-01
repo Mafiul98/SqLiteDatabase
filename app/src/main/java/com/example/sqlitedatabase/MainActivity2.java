@@ -15,16 +15,18 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    TextView tvdisplay;
+    SearchView searchview;
 
     ListView listview;
 
@@ -40,23 +42,23 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         listview=findViewById(R.id.listview);
+        searchview=findViewById(R.id.searchview);
         dbhelper = new DatabaseHelper(MainActivity2.this);
 
 
-        Cursor cursor = dbhelper.getAlldata();
+        Cursor cursor = dbhelper.searchdataByName("mafi");
         while (cursor.moveToNext()){
             int id = cursor.getInt(0);
             String name = cursor.getString(1);
             String mobile = cursor.getString(2);
 
             datalist.add(new User(id, name, mobile));
-
-
         }
 
 
         adapter = new myadapter();
         listview.setAdapter(new myadapter());
+
 
     }
 
@@ -94,6 +96,8 @@ public class MainActivity2 extends AppCompatActivity {
             tvname.setText("Name: " + user.getName());
             tvmobile.setText("Mobile: " + user.getMobile());
 
+
+
             imageview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -102,7 +106,8 @@ public class MainActivity2 extends AppCompatActivity {
                     dbhelper.deleteone(id);
                     datalist.remove(position);
                     notifyDataSetChanged();
-                    Toast.makeText(MainActivity2.this,"Data has been deleted"+id,Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity2.this,"Data has been deleted"+id,Toast.LENGTH_LONG)
+                            .show();
 
                 }
             });
