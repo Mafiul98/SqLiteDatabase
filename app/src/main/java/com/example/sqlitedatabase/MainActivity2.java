@@ -6,8 +6,11 @@ import android.service.autofill.SaveRequest;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,10 +32,7 @@ public class MainActivity2 extends AppCompatActivity {
     SearchView searchview;
 
     ListView listview;
-
-
     DatabaseHelper dbhelper;
-
     ArrayList<User> datalist = new ArrayList<>();
     myadapter adapter;
 
@@ -46,33 +46,46 @@ public class MainActivity2 extends AppCompatActivity {
         dbhelper = new DatabaseHelper(MainActivity2.this);
 
 
-        Cursor cursor = dbhelper.searchdataByName("mafi");
+        Cursor cursor = dbhelper.getAlldata();
         while (cursor.moveToNext()){
             int id = cursor.getInt(0);
             String name = cursor.getString(1);
             String mobile = cursor.getString(2);
-
             datalist.add(new User(id, name, mobile));
+
         }
 
-
         adapter = new myadapter();
-        listview.setAdapter(new myadapter());
+        listview.setAdapter(adapter);
+
+        searchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
 
 
     }
 
-    private class myadapter extends BaseAdapter{
+    private class myadapter extends BaseAdapter implements Filterable {
 
+        ArrayList<User> filterdlist = new ArrayList<>(datalist);
 
         @Override
         public int getCount() {
-            return datalist.size();
+            return filterdlist.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return datalist.get(position);
+            return filterdlist.get(position);
         }
 
         @Override
@@ -82,39 +95,61 @@ public class MainActivity2 extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
             LayoutInflater layoutInflater = getLayoutInflater();
-            View myview = layoutInflater.inflate(R.layout.item,parent,false);
+            View myview  = layoutInflater.inflate(R.layout.item,parent,false);
             TextView tvid = myview.findViewById(R.id.tvid);
             TextView tvname = myview.findViewById(R.id.tvname);
             TextView tvmobile = myview.findViewById(R.id.tvmobile);
             ImageView imageview = myview.findViewById(R.id.imageview);
 
-            User user = datalist.get(position);
-
+            User user = filterdlist.get(position);
             tvid.setText("Id: " + user.getId());
             tvname.setText("Name: " + user.getName());
             tvmobile.setText("Mobile: " + user.getMobile());
 
+            imageview.setOnClickListener(v ->{
+                dbhelper.deleteone(user.getId());
+                datalist.remove(user);
+                filterdlist.remove(user);
+                notifyDataSetChanged();
+                Toast.makeText(MainActivity2.this, "Data deleted: " + user.getId(), Toast.LENGTH_SHORT).show();
 
-
-            imageview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    int id = user.getId();
-                    dbhelper.deleteone(id);
-                    datalist.remove(position);
-                    notifyDataSetChanged();
-                    Toast.makeText(MainActivity2.this,"Data has been deleted"+id,Toast.LENGTH_LONG)
-                            .show();
-
-                }
             });
-
 
             return myview;
         }
-    }
 
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    ArrayList<User> templist = new ArrayList<>();
+                    if (constraint == null || constraint.length()==0){
+                        templist.addAll(datalist);
+                    }else {
+                        String filterpattren = constraint.toString().toLowerCase().trim();
+                        for (User user : datalist) {
+                            if (user.getName().toLowerCase().contains(filterpattren)
+                                    || user.getMobile().toLowerCase().contains(filterpattren)) {
+                                templist.add(user);
+                            }
+                        }
+                    }
+                    FilterResults results = new FilterResults();
+                    results.values = templist;
+
+                    return results;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    filterdlist.clear();
+                    filterdlist.addAll((ArrayList<User>) results.values);
+                    notifyDataSetChanged();
+
+                }
+            };
+        }
+    }
 }
